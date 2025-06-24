@@ -3,19 +3,169 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WhatsApp - Recordatorios Webinar</title>
+  <title>Sistema WhatsApp Webinar - Completo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="bg-gradient-to-br from-green-50 to-blue-50 text-gray-800 font-sans min-h-screen">
-  <div class="max-w-6xl mx-auto p-6 space-y-6">
-    <!-- Header -->
+  
+  <!-- Navegación -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center space-x-4">
+          <h1 class="text-xl font-bold text-green-700">📱 Sistema WhatsApp Webinar</h1>
+        </div>
+        <div class="flex space-x-4">
+          <button onclick="mostrarSeccion('generador')" id="btnGenerador" class="px-4 py-2 rounded-lg bg-green-600 text-white font-medium">
+            📊 Generador Excel
+          </button>
+          <button onclick="mostrarSeccion('automator')" id="btnAutomator" class="px-4 py-2 rounded-lg bg-gray-300 text-gray-700 font-medium">
+            📱 Envío de Mensajes
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- SECCIÓN 1: GENERADOR DE EXCEL -->
+  <div id="seccionGenerador" class="max-w-4xl mx-auto p-6 space-y-6">
+    
+    <!-- Header Generador -->
+    <div class="bg-white shadow-xl rounded-2xl p-6">
+      <h1 class="text-3xl font-bold text-center mb-4 text-green-700">
+        📊 Generador Excel Webinar
+      </h1>
+      <p class="text-center text-gray-600 mb-6">
+        Paso 1: Genera un archivo Excel con estructura automática para tu webinar
+      </p>
+
+      <!-- Configuración del webinar -->
+      <div class="bg-blue-50 p-6 rounded-lg mb-6">
+        <h2 class="text-xl font-bold mb-4 text-blue-800">⚙️ Configuración del Webinar</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block font-medium mb-2">📅 Fecha del webinar:</label>
+            <input type="date" id="fechaWebinar" class="w-full border p-3 rounded-lg" />
+          </div>
+          <div>
+            <label class="block font-medium mb-2">🕐 Hora del webinar:</label>
+            <input type="time" id="horaWebinar" value="20:00" class="w-full border p-3 rounded-lg" />
+          </div>
+          <div>
+            <label class="block font-medium mb-2">🎯 Nombre del webinar:</label>
+            <input type="text" id="nombreWebinar" placeholder="WEBINAR DE MARKETING DIGITAL" class="w-full border p-3 rounded-lg" />
+          </div>
+          <div>
+            <label class="block font-medium mb-2">🌐 URL del webinar:</label>
+            <input type="text" id="urlWebinar" placeholder="https://teams.microsoft.com/meet/123456" class="w-full border p-3 rounded-lg" />
+          </div>
+          <div>
+            <label class="block font-medium mb-2">👥 Filas para fórmulas:</label>
+            <select id="numFilas" class="w-full border p-3 rounded-lg">
+              <option value="10">10 filas con fórmulas</option>
+              <option value="50">50 filas con fórmulas</option>
+              <option value="100" selected>100 filas con fórmulas</option>
+              <option value="500">500 filas con fórmulas</option>
+              <option value="1000">1000 filas con fórmulas</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista previa de los datos -->
+      <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <h3 class="font-bold text-gray-800 mb-2">📋 Vista previa de la estructura:</h3>
+        <div class="grid md:grid-cols-3 gap-4 text-sm">
+          <div class="bg-white p-3 rounded border">
+            <h4 class="font-semibold text-blue-600 mb-2">Hoja: Identificacion</h4>
+            <ul class="space-y-1 text-gray-600">
+              <li>• NOMBRE</li>
+              <li>• APELLIDOS</li>
+              <li>• TELEFONO</li>
+            </ul>
+          </div>
+          <div class="bg-white p-3 rounded border">
+            <h4 class="font-semibold text-green-600 mb-2">Hoja: Datos</h4>
+            <ul class="space-y-1 text-gray-600">
+              <li>• FECHA</li>
+              <li>• HORA</li>
+              <li>• NOMBRE WEBINAR</li>
+              <li>• URL</li>
+              <li>• NOMBRE COMPLETO (automático)</li>
+              <li>• TELEFONO FORMATEADO (automático)</li>
+            </ul>
+          </div>
+          <div class="bg-white p-3 rounded border">
+            <h4 class="font-semibold text-purple-600 mb-2">Hoja: Mensajes</h4>
+            <ul class="space-y-1 text-gray-600">
+              <li>• Identificador</li>
+              <li>• Mensaje</li>
+              <li>• (Incluye plantillas)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="max-w-md mx-auto space-y-4">
+        <button onclick="generarExcelPlantilla()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-4 rounded-lg text-lg font-bold transition-colors w-full">
+          📄 Generar Excel Plantilla
+        </button>
+        <div class="text-center">
+          <button onclick="mostrarSeccion('automator')" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
+            ➡️ Continuar al Envío de Mensajes
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información Generador -->
+    <div class="bg-white shadow-xl rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-4 text-gray-700">ℹ️ Información del Generador</h2>
+      <div class="space-y-4 text-gray-600">
+        <div class="bg-green-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-green-800 mb-2">✅ Datos que se rellenan automáticamente:</h3>
+          <ul class="space-y-1 text-sm">
+            <li>• <strong>FECHA:</strong> Se rellena en todas las filas con la fecha configurada</li>
+            <li>• <strong>HORA:</strong> Se rellena en todas las filas con la hora configurada</li>
+            <li>• <strong>NOMBRE WEBINAR:</strong> Se rellena en todas las filas con el nombre configurado</li>
+            <li>• <strong>URL:</strong> Se rellena en todas las filas con la URL configurada</li>
+            <li>• <strong>NOMBRE COMPLETO:</strong> Fórmula que combina NOMBRE + APELLIDOS</li>  
+            <li>• <strong>TELEFONO FORMATEADO:</strong> Fórmula que añade el prefijo 34 si es necesario</li>
+          </ul>
+        </div>
+        
+        <div class="bg-yellow-50 p-4 rounded-lg">
+          <h3 class="font-semibold text-yellow-800 mb-2">⚠️ Instrucciones:</h3>
+          <ol class="space-y-1 text-sm list-decimal list-inside">
+            <li>Configura los datos del webinar arriba</li>
+            <li>Selecciona cuántas filas quieres preparar con fórmulas</li>
+            <li>Haz clic en "Generar Excel Plantilla"</li>
+            <li>Abre el archivo en Excel y añade tus datos en la hoja "Identificacion"</li>
+            <li>Ve a la sección "Envío de Mensajes" para usar el archivo</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log de actividad Generador -->
+    <div class="bg-white shadow-xl rounded-2xl p-6">
+      <h2 class="text-xl font-bold mb-4 text-gray-700">📝 Registro de actividad</h2>
+      <div id="logContentGenerador" class="text-sm text-gray-600 max-h-40 overflow-y-auto bg-gray-50 p-3 rounded-lg font-mono"></div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: AUTOMATOR DE MENSAJES -->
+  <div id="seccionAutomator" class="hidden max-w-6xl mx-auto p-6 space-y-6">
+    
+    <!-- Header Automator -->
     <div class="bg-white shadow-xl rounded-2xl p-6">
       <h1 class="text-3xl font-bold text-center mb-4 text-green-700">
         📱 WhatsApp - Recordatorios Webinar
       </h1>
       <p class="text-center text-gray-600 mb-6">
-        Sistema de envío masivo de recordatorios personalizados
+        Paso 2: Sistema de envío masivo de recordatorios personalizados
       </p>
 
       <!-- Carga de archivo -->
@@ -26,7 +176,7 @@
             <label class="block font-medium mb-2">Archivo Excel (.xlsx):</label>
             <input type="file" id="excelFile" accept=".xlsx,.xls" class="w-full border p-3 rounded-lg" />
             <p class="text-sm text-gray-600 mt-1">
-              El archivo debe tener hojas: "Identificacion" y "Datos"
+              Usa el archivo Excel generado en el paso anterior
             </p>
           </div>
           <button onclick="leerExcel()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full transition-colors font-medium">
@@ -116,10 +266,10 @@
       <div id="tablaEnvios" class="overflow-x-auto max-h-96 overflow-y-auto"></div>
     </div>
 
-    <!-- Log de actividad -->
+    <!-- Log de actividad Automator -->
     <div id="logEnvios" class="bg-white shadow-xl rounded-2xl p-6">
       <h2 class="text-xl font-bold mb-4 text-gray-700">📝 Registro de actividad</h2>
-      <div id="logContent" class="text-sm text-gray-600 max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg font-mono"></div>
+      <div id="logContentAutomator" class="text-sm text-gray-600 max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg font-mono"></div>
     </div>
   </div>
 
@@ -138,13 +288,206 @@
 
 <script>
 // Variables globales
+let libroExcel;
 let participantes = [];
 let indiceActual = 0;
 let mensajePersonalizado = '';
 let etiquetasDatos = [];
-let libroExcel;
 
-// Plantillas de mensajes actualizadas
+// Función para cambiar entre secciones
+function mostrarSeccion(seccion) {
+  const generador = document.getElementById('seccionGenerador');
+  const automator = document.getElementById('seccionAutomator');
+  const btnGenerador = document.getElementById('btnGenerador');
+  const btnAutomator = document.getElementById('btnAutomator');
+  
+  if (seccion === 'generador') {
+    generador.classList.remove('hidden');
+    automator.classList.add('hidden');
+    btnGenerador.classList.add('bg-green-600', 'text-white');
+    btnGenerador.classList.remove('bg-gray-300', 'text-gray-700');
+    btnAutomator.classList.add('bg-gray-300', 'text-gray-700');
+    btnAutomator.classList.remove('bg-green-600', 'text-white');
+  } else {
+    generador.classList.add('hidden');
+    automator.classList.remove('hidden');
+    btnAutomator.classList.add('bg-green-600', 'text-white');
+    btnAutomator.classList.remove('bg-gray-300', 'text-gray-700');
+    btnGenerador.classList.add('bg-gray-300', 'text-gray-700');
+    btnGenerador.classList.remove('bg-green-600', 'text-white');
+  }
+}
+
+// FUNCIONES DEL GENERADOR
+function formatearFecha(fecha) {
+  const d = new Date(fecha);
+  const dia = String(d.getDate()).padStart(2, '0');
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const año = String(d.getFullYear()).slice(-2);
+  return `${dia}/${mes}/${año}`;
+}
+
+function generarExcelPlantilla() {
+  const fechaWebinar = document.getElementById('fechaWebinar').value;
+  const horaWebinar = document.getElementById('horaWebinar').value;
+  const nombreWebinar = document.getElementById('nombreWebinar').value || 'WEBINAR DE MARKETING DIGITAL';
+  const urlWebinar = document.getElementById('urlWebinar').value || 'https://teams.microsoft.com/meet/123456';
+  const numFilas = parseInt(document.getElementById('numFilas').value);
+  
+  if (!fechaWebinar) {
+    mostrarLogGenerador('❌ Por favor selecciona una fecha para el webinar', 'error');
+    return;
+  }
+  
+  mostrarLogGenerador(`📄 Generando plantilla Excel con ${numFilas} filas preparadas...`, 'info');
+  
+  const wb = XLSX.utils.book_new();
+  
+  // Hoja Identificacion vacía pero con encabezados
+  const identificacionData = [['NOMBRE', 'APELLIDOS', 'TELEFONO']];
+  
+  // Añadir filas vacías
+  for (let i = 0; i < numFilas; i++) {
+    identificacionData.push(['', '', '']);
+  }
+  
+  const wsIdent = XLSX.utils.aoa_to_sheet(identificacionData);
+  XLSX.utils.book_append_sheet(wb, wsIdent, 'Identificacion');
+  
+  // Hoja Datos con fórmulas automáticas y datos completados
+  const datosData = [['FECHA', 'HORA', 'NOMBRE WEBINAR', 'URL', 'NOMBRE COMPLETO', 'TELEFONO FORMATEADO']];
+  
+  const fechaFormateada = formatearFecha(fechaWebinar);
+  
+  // Rellenar todas las filas con los datos del webinar y las fórmulas
+  for (let i = 2; i <= numFilas + 1; i++) {
+    datosData.push([
+      fechaFormateada,      // FECHA - rellenada en todas las filas
+      horaWebinar,          // HORA - rellenada en todas las filas
+      nombreWebinar,        // NOMBRE WEBINAR - rellenado en todas las filas  
+      urlWebinar,           // URL - rellenada en todas las filas
+      // Fórmula para NOMBRE COMPLETO
+      { f: `Identificacion!A${i}&" "&Identificacion!B${i}` },
+      // Fórmula para TELEFONO FORMATEADO
+      { f: `IF(LEN(Identificacion!C${i})=9,IF(LEFT(Identificacion!C${i},2)="34",Identificacion!C${i},"34"&Identificacion!C${i}),Identificacion!C${i})` }
+    ]);
+  }
+  
+  const wsDatos = XLSX.utils.aoa_to_sheet(datosData);
+  XLSX.utils.book_append_sheet(wb, wsDatos, 'Datos');
+  
+  // Hoja Mensajes con plantillas predefinidas
+  const mensajesData = [
+    ['Identificador', 'Mensaje'],
+    ['Recordatorio Webinar', `¡Hola {Nombre}! 👋
+
+Te recordamos que tienes programado el webinar:
+📅 *{NOMBRE WEBINAR}*
+🗓️ Fecha: {FECHA}
+🕐 Hora: {HORA}
+
+🌐 Accede aquí: {URL}
+
+¡No te lo pierdas! 🚀
+
+¿Tienes alguna duda? ¡Escríbenos!`],
+    
+    ['Confirmación Asistencia', `¡Hola {Nombre}! 👋
+
+¿Confirmas tu asistencia al webinar?
+📅 *{NOMBRE WEBINAR}*
+🗓️ {FECHA} a las {HORA}
+
+🌐 Enlace: {URL}
+
+Responde "SÍ" para confirmar tu plaza.
+
+¡Te esperamos! 🎯`],
+    
+    ['Recordatorio Urgente', `🚨 ¡RECORDATORIO URGENTE! 🚨
+
+Hola {Nombre},
+
+El webinar comienza en menos de 24 horas:
+📅 *{NOMBRE WEBINAR}*
+🗓️ {FECHA} - {HORA}
+
+🌐 ACCEDE AQUÍ: {URL}
+
+⏰ ¡No te quedes sin tu plaza!
+
+Nos vemos mañana 👋`],
+
+    ['Mensaje de Prueba', `✅ MENSAJE DE PRUEBA - TODAS LAS ETIQUETAS ✅
+
+Hola {Nombre}! 👋
+
+📊 DATOS PERSONALES:
+• Nombre completo: {NOMBRE COMPLETO}
+• Teléfono: {TELEFONO FORMATEADO}
+
+📚 INFORMACIÓN DEL WEBINAR:
+• Webinar: {NOMBRE WEBINAR}
+• URL: {URL}
+• Fecha: {FECHA}
+• Hora: {HORA}
+
+✅ Este mensaje muestra TODAS las etiquetas disponibles para verificar que funcionan correctamente.`]
+  ];
+  
+  const wsMensajes = XLSX.utils.aoa_to_sheet(mensajesData);
+  
+  // Ajustar ancho de columnas para la hoja Mensajes
+  wsMensajes['!cols'] = [
+    { wch: 25 }, // Columna Identificador
+    { wch: 80 }  // Columna Mensaje (más ancha)
+  ];
+  
+  XLSX.utils.book_append_sheet(wb, wsMensajes, 'Mensajes');
+  
+  // Descargar archivo
+  const fecha = formatearFecha(fechaWebinar).replace(/\//g, '');
+  const nombreArchivo = `Plantilla_WhatsApp_Webinar_${fecha}_${numFilas}filas.xlsx`;
+  
+  XLSX.writeFile(wb, nombreArchivo);
+  
+  mostrarLogGenerador(`✅ Plantilla Excel generada: ${nombreArchivo}`, 'success');
+  mostrarLogGenerador(`📊 ${numFilas} filas preparadas con datos del webinar completados`, 'info');
+  mostrarLogGenerador(`📋 Fecha: ${fechaFormateada} | Hora: ${horaWebinar} | Webinar: ${nombreWebinar}`, 'info');
+  mostrarLogGenerador(`📝 Ahora ve a "Envío de Mensajes" para usar el archivo`, 'info');
+}
+
+function mostrarLogGenerador(mensaje, tipo = 'info') {
+  const logDiv = document.getElementById('logContentGenerador');
+  const timestamp = new Date().toLocaleTimeString('es-ES');
+  
+  let icono = 'ℹ️';
+  let color = 'text-gray-600';
+  
+  switch (tipo) {
+    case 'success':
+      icono = '✅';
+      color = 'text-green-600';
+      break;
+    case 'error':
+      icono = '❌';
+      color = 'text-red-600';
+      break;
+    case 'warning':
+      icono = '⚠️';
+      color = 'text-yellow-600';
+      break;
+  }
+  
+  const logEntry = document.createElement('div');
+  logEntry.className = `mb-1 ${color}`;
+  logEntry.innerHTML = `<span class="text-xs text-gray-500">[${timestamp}]</span> ${icono} ${mensaje}`;
+  
+  logDiv.appendChild(logEntry);
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+// FUNCIONES DEL AUTOMATOR
 const plantillasMensajes = {
   recordatorio: `¡Hola {Nombre}! 👋
 
@@ -186,11 +529,10 @@ El webinar comienza en menos de 24 horas:
 Nos vemos mañana 👋`
 };
 
-// Función para leer el archivo Excel
 function leerExcel() {
   const archivo = document.getElementById('excelFile').files[0];
   if (!archivo) {
-    mostrarLog('❌ Por favor selecciona un archivo Excel', 'error');
+    mostrarLogAutomator('❌ Por favor selecciona un archivo Excel', 'error');
     return;
   }
 
@@ -205,29 +547,28 @@ function leerExcel() {
         raw: false
       });
       
-      mostrarLog(`🔍 Hojas encontradas: ${libroExcel.SheetNames.join(', ')}`, 'info');
+      mostrarLogAutomator(`🔍 Hojas encontradas: ${libroExcel.SheetNames.join(', ')}`, 'info');
       
       const hojaIdent = libroExcel.Sheets["Identificacion"];
       const hojaDatos = libroExcel.Sheets["Datos"];
       
       if (!hojaIdent || !hojaDatos) {
-        mostrarLog('❌ El archivo debe tener hojas "Identificacion" y "Datos"', 'error');
+        mostrarLogAutomator('❌ El archivo debe tener hojas "Identificacion" y "Datos"', 'error');
         return;
       }
       
       procesarDatosWebinar(hojaIdent, hojaDatos);
       cargarMensajesGuardados();
       cargarEtiquetasDesdeDatos();
-      mostrarLog('✅ Archivo Excel procesado correctamente', 'success');
+      mostrarLogAutomator('✅ Archivo Excel procesado correctamente', 'success');
     } catch (error) {
-      mostrarLog('❌ Error al procesar el archivo: ' + error.message, 'error');
+      mostrarLogAutomator('❌ Error al procesar el archivo: ' + error.message, 'error');
     }
   };
   
   lector.readAsArrayBuffer(archivo);
 }
 
-// Función para procesar los datos del webinar
 function procesarDatosWebinar(hojaIdent, hojaDatos) {
   participantes = [];
   let fila = 2;
@@ -293,10 +634,9 @@ function procesarDatosWebinar(hojaIdent, hojaDatos) {
 
   mostrarEstadisticas();
   document.getElementById('editorMensaje').classList.remove('hidden');
-  mostrarLog(`✅ Procesados ${procesados} participantes válidos`, 'success');
+  mostrarLogAutomator(`✅ Procesados ${procesados} participantes válidos`, 'success');
 }
 
-// Función para cargar etiquetas desde datos
 function cargarEtiquetasDesdeDatos() {
   etiquetasDatos = [];
   let html = '<span onclick="insertarEtiqueta(\'{Nombre}\')" class="cursor-pointer bg-blue-100 hover:bg-blue-200 px-2 py-1 mx-1 mb-1 rounded text-xs inline-block">{Nombre}</span>';
@@ -317,7 +657,6 @@ function cargarEtiquetasDesdeDatos() {
   document.getElementById("etiquetasContainer").innerHTML = html;
 }
 
-// Función para insertar etiqueta
 function insertarEtiqueta(etiqueta) {
   const textarea = document.getElementById("mensajeTexto");
   const start = textarea.selectionStart;
@@ -328,7 +667,6 @@ function insertarEtiqueta(etiqueta) {
   textarea.selectionStart = textarea.selectionEnd = start + etiqueta.length;
 }
 
-// Función para aplicar plantilla
 function aplicarPlantilla() {
   const tipo = document.getElementById("tipoMensaje").value;
   if (plantillasMensajes[tipo]) {
@@ -336,7 +674,6 @@ function aplicarPlantilla() {
   }
 }
 
-// Función para mostrar estadísticas
 function mostrarEstadisticas() {
   const statsDiv = document.getElementById('estadisticas');
   const statsContent = document.getElementById('stats-content');
@@ -367,16 +704,15 @@ function mostrarEstadisticas() {
   statsDiv.classList.remove('hidden');
 }
 
-// Función para mostrar vista previa del mensaje
 function mostrarVistaPrevia() {
   const mensajeTexto = document.getElementById('mensajeTexto').value;
   if (!mensajeTexto.trim()) {
-    mostrarLog('❌ Por favor escribe un mensaje primero', 'error');
+    mostrarLogAutomator('❌ Por favor escribe un mensaje primero', 'error');
     return;
   }
 
   if (participantes.length === 0) {
-    mostrarLog('❌ No hay participantes cargados', 'error');
+    mostrarLogAutomator('❌ No hay participantes cargados', 'error');
     return;
   }
 
@@ -392,10 +728,9 @@ function mostrarVistaPrevia() {
   `;
   
   previewDiv.classList.remove('hidden');
-  mostrarLog('👀 Vista previa generada con el primer participante', 'info');
+  mostrarLogAutomator('👀 Vista previa generada con el primer participante', 'info');
 }
 
-// Función para formatear mensaje con etiquetas
 function formatearMensaje(mensaje, participante) {
   let mensajeFormateado = mensaje;
   
@@ -412,7 +747,6 @@ function formatearMensaje(mensaje, participante) {
   return mensajeFormateado;
 }
 
-// Función para cargar mensajes guardados
 function cargarMensajesGuardados() {
   if (!libroExcel.Sheets["Mensajes"]) {
     libroExcel.Sheets["Mensajes"] = {
@@ -437,7 +771,6 @@ function cargarMensajesGuardados() {
   }
 }
 
-// Función para cargar mensaje guardado
 function cargarMensajeGuardado() {
   const valor = document.getElementById("mensajeSelect").value;
   if (!valor || valor === "nuevo") return;
@@ -447,13 +780,12 @@ function cargarMensajeGuardado() {
   document.getElementById("mensajeTexto").value = hoja["B" + valor].v;
 }
 
-// Función para guardar mensaje
 function guardarMensaje() {
   const nombre = document.getElementById("nombreMensaje").value.trim();
   const mensaje = document.getElementById("mensajeTexto").value.trim();
   
   if (!nombre || !mensaje) {
-    mostrarLog('❌ Completa el nombre y el mensaje', 'error');
+    mostrarLogAutomator('❌ Completa el nombre y el mensaje', 'error');
     return;
   }
 
@@ -485,19 +817,18 @@ function guardarMensaje() {
   link.click();
 
   cargarMensajesGuardados();
-  mostrarLog(`✅ Mensaje "${nombre}" guardado correctamente`, 'success');
+  mostrarLogAutomator(`✅ Mensaje "${nombre}" guardado correctamente`, 'success');
 }
 
-// Función para iniciar envío en lote
 function iniciarEnvioLote() {
   const mensajeTexto = document.getElementById('mensajeTexto').value;
   if (!mensajeTexto.trim()) {
-    mostrarLog('❌ Por favor escribe un mensaje primero', 'error');
+    mostrarLogAutomator('❌ Por favor escribe un mensaje primero', 'error');
     return;
   }
 
   if (participantes.length === 0) {
-    mostrarLog('❌ No hay participantes cargados', 'error');
+    mostrarLogAutomator('❌ No hay participantes cargados', 'error');
     return;
   }
 
@@ -507,11 +838,10 @@ function iniciarEnvioLote() {
   mostrarListaEnvio();
   document.getElementById('btnSiguiente').classList.remove('hidden');
   
-  mostrarLog(`🚀 Iniciando envío masivo a ${participantes.length} participantes`, 'success');
-  enviarSiguiente(); // Enviar el primero automáticamente
+  mostrarLogAutomator(`🚀 Iniciando envío masivo a ${participantes.length} participantes`, 'success');
+  enviarSiguiente();
 }
 
-// Función para mostrar lista de envíos
 function mostrarListaEnvio() {
   const tablaDiv = document.getElementById('tablaEnvios');
   const contadorDiv = document.getElementById('contadorEnvio');
@@ -553,10 +883,9 @@ function mostrarListaEnvio() {
   document.getElementById('listaEnvio').classList.remove('hidden');
 }
 
-// Función para enviar siguiente mensaje
 function enviarSiguiente() {
   if (indiceActual >= participantes.length) {
-    mostrarLog('✅ ¡Envío masivo completado!', 'success');
+    mostrarLogAutomator('✅ ¡Envío masivo completado!', 'success');
     document.getElementById('btnSiguiente').classList.add('hidden');
     return;
   }
@@ -564,32 +893,26 @@ function enviarSiguiente() {
   const participante = participantes[indiceActual];
   const mensajeFormateado = formatearMensaje(mensajePersonalizado, participante);
   
-  // Crear enlace de WhatsApp
   const mensajeCodificado = encodeURIComponent(mensajeFormateado);
   const urlWhatsApp = `https://web.whatsapp.com/send?phone=${participante.telefono}&text=${mensajeCodificado}`;
   
-  // Abrir WhatsApp en nueva pestaña
   window.open(urlWhatsApp, '_blank');
   
-  mostrarLog(`📤 Enviando mensaje ${indiceActual + 1}/${participantes.length} a ${participante.nombreCompleto}`, 'info');
+  mostrarLogAutomator(`📤 Enviando mensaje ${indiceActual + 1}/${participantes.length} a ${participante.nombreCompleto}`, 'info');
   
   indiceActual++;
-  
-  // Actualizar tabla
   mostrarListaEnvio();
   
-  // Si es el último, ocultar botón
   if (indiceActual >= participantes.length) {
     setTimeout(() => {
-      mostrarLog('✅ ¡Envío masivo completado!', 'success');
+      mostrarLogAutomator('✅ ¡Envío masivo completado!', 'success');
       document.getElementById('btnSiguiente').classList.add('hidden');
     }, 1000);
   }
 }
 
-// Función para mostrar logs
-function mostrarLog(mensaje, tipo = 'info') {
-  const logDiv = document.getElementById('logContent');
+function mostrarLogAutomator(mensaje, tipo = 'info') {
+  const logDiv = document.getElementById('logContentAutomator');
   const timestamp = new Date().toLocaleTimeString('es-ES');
   
   let icono = 'ℹ️';
@@ -620,8 +943,16 @@ function mostrarLog(mensaje, tipo = 'info') {
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', function() {
-  mostrarLog('🚀 Sistema de recordatorios de webinar iniciado', 'success');
-  mostrarLog('📊 Carga tu archivo Excel para comenzar', 'info');
+  // Establecer fecha por defecto (mañana)
+  const mañana = new Date();
+  mañana.setDate(mañana.getDate() + 1);
+  document.getElementById('fechaWebinar').value = mañana.toISOString().split('T')[0];
+  
+  mostrarLogGenerador('🚀 Sistema WhatsApp Webinar iniciado', 'success');
+  mostrarLogGenerador('📋 Paso 1: Configura los datos del webinar y genera tu archivo Excel', 'info');
+  
+  mostrarLogAutomator('📱 Automator de mensajes listo', 'success');
+  mostrarLogAutomator('📊 Paso 2: Carga el archivo Excel generado para comenzar el envío', 'info');
 });
 </script>
 
