@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp - Recordatorios Webinar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-blue-50 text-gray-800 font-sans min-h-screen">
+  <div class="max-w-6xl mx-auto p-6 space-y-6">
+    <!-- Header -->
+    <div class="bg-white shadow-xl rounded-2xl p-6">
+      <h1 class="text-3xl font-bold text-center mb-4 text-green-700">
+        📱 WhatsApp - Recordatorios Webinar
+      </h1>
+      <p class="text-center text-gray-600 mb-6">
+        Sistema de envío masivo de recordatorios personalizados
+      </p>
+
+      <!-- Carga de archivo -->
+      <div class="bg-blue-50 p-6 rounded-lg mb-6">
+        <h2 class="text-xl font-bold mb-4 text-blue-800">📊 Cargar datos de participantes</h2>
+        <div class="space-y-4">
+          <div>
+            <label class="block font-medium mb-2">Archivo Excel (.xlsx):</label>
+            <input type="file" id="excelFile" accept=".xlsx,.xls" class="w-full border p-3 rounded-lg" />
+            <p class="text-sm text-gray-600 mt-1">
+              El archivo debe tener hojas: "Identificacion" y "Datos"
+            </p>
+          </div>
+          <button onclick="leerExcel()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg w-full transition-colors font-medium">
+            📖 Analizar datos
+          </button>
+        </div>
+      </div>
+
+      <!-- Estadísticas -->
+      <div id="estadisticas" class="hidden bg-green-50 p-4 rounded-lg mb-6">
+        <h3 class="font-bold text-green-800 mb-2">📈 Resumen de datos:</h3>
+        <div id="stats-content" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+      </div>
+    </div>
+
+    <!-- Editor de mensaje -->
+    <div id="editorMensaje" class="hidden bg-white shadow-xl rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-4 text-green-700">✏️ Mensaje de recordatorio</h2>
+      
+      <div class="space-y-4">
+        <div class="grid md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2">🎯 Tipo de mensaje:</label>
+            <select id="tipoMensaje" onchange="aplicarPlantilla()" class="w-full border p-2 rounded-lg">
+              <option value="personalizado">Personalizado</option>
+              <option value="recordatorio">Recordatorio webinar</option>
+              <option value="confirmacion">Confirmación asistencia</option>
+              <option value="urgente">Recordatorio urgente</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-2">💾 Mensajes guardados:</label>
+            <select id="mensajeSelect" onchange="cargarMensajeGuardado()" class="w-full border p-2 rounded-lg">
+              <option value="">-- Seleccionar mensaje --</option>
+              <option value="nuevo">➕ Crear nuevo</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">💾 Nombre del mensaje (para guardar):</label>
+          <input type="text" id="nombreMensaje" placeholder="Ej: Recordatorio webinar marketing" class="w-full border p-2 rounded-lg" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2">📝 Mensaje personalizado:</label>
+          <textarea id="mensajeTexto" rows="8" class="w-full border p-4 rounded-lg font-mono text-sm" 
+            placeholder="Hola {Nombre}, te recordamos que mañana tienes el webinar..."></textarea>
+        </div>
+
+        <div class="bg-gray-50 p-4 rounded-lg">
+          <h4 class="font-medium mb-2">📋 Etiquetas disponibles (click para insertar):</h4>
+          <div class="flex flex-wrap gap-2 text-sm" id="etiquetasContainer">
+            <!-- Se cargarán dinámicamente -->
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <button onclick="mostrarVistaPrevia()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg font-medium">
+            👀 Vista previa
+          </button>
+          <button onclick="guardarMensaje()" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg font-medium">
+            💾 Guardar mensaje
+          </button>
+          <button onclick="iniciarEnvioLote()" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium">
+            🚀 Iniciar envío masivo
+          </button>
+        </div>
+      </div>
+
+      <!-- Vista previa -->
+      <div id="vistaPrevia" class="hidden bg-yellow-50 border border-yellow-200 rounded-lg p-4 mt-4">
+        <h3 class="font-bold text-yellow-800 mb-2">👀 Vista previa del mensaje:</h3>
+        <div id="previewContent" class="bg-white p-4 rounded-lg mensaje-preview"></div>
+      </div>
+    </div>
+
+    <!-- Lista de envíos -->
+    <div id="listaEnvio" class="hidden bg-white shadow-xl rounded-2xl p-6">
+      <h2 class="text-2xl font-bold mb-4 text-blue-700">📋 Lista de envíos programados</h2>
+      <div class="flex justify-between items-center mb-4">
+        <span id="contadorEnvio" class="text-sm text-gray-600"></span>
+        <button onclick="enviarSiguiente()" id="btnSiguiente" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg hidden">
+          📤 Enviar siguiente
+        </button>
+      </div>
+      <div id="tablaEnvios" class="overflow-x-auto max-h-96 overflow-y-auto"></div>
+    </div>
+
+    <!-- Log de actividad -->
+    <div id="logEnvios" class="bg-white shadow-xl rounded-2xl p-6">
+      <h2 class="text-xl font-bold mb-4 text-gray-700">📝 Registro de actividad</h2>
+      <div id="logContent" class="text-sm text-gray-600 max-h-60 overflow-y-auto bg-gray-50 p-3 rounded-lg font-mono"></div>
+    </div>
+  </div>
+
+  <style>
+    .mensaje-preview {
+      background: #dcf8c6;
+      border-radius: 10px;
+      padding: 15px;
+      max-width: 400px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    }
+  </style>
+
+<script>
+// Variables globales
+let participantes = [];
+let indiceActual = 0;
+let mensajePersonalizado = '';
+let etiquetasDatos = [];
+let libroExcel;
+
+// Plantillas de mensajes actualizadas
+const plantillasMensajes = {
+  recordatorio: `¡Hola {Nombre}! 👋
+
+Te recordamos que tienes programado el webinar:
+📅 *{NOMBRE WEBINAR}*
+🗓️ Fecha: {FECHA}
+🕐 Hora: {HORA}
+
+🌐 Accede aquí: {URL}
+
+¡No te lo pierdas! 🚀
+
+¿Tienes alguna duda? ¡Escríbenos!`,
+
+  confirmacion: `¡Hola {Nombre}! 👋
+
+¿Confirmas tu asistencia al webinar?
+📅 *{NOMBRE WEBINAR}*
+🗓️ {FECHA} a las {HORA}
+
+🌐 Enlace: {URL}
+
+Responde "SÍ" para confirmar tu plaza.
+
+¡Te esperamos! 🎯`,
+
+  urgente: `🚨 ¡RECORDATORIO URGENTE! 🚨
+
+Hola {Nombre},
+
+El webinar comienza en menos de 24 horas:
+📅 *{NOMBRE WEBINAR}*
+🗓️ {FECHA} - {HORA}
+
+🌐 ACCEDE AQUÍ: {URL}
+
+⏰ ¡No te quedes sin tu plaza!
+
+Nos vemos mañana 👋`
+};
+
+// Función para leer el archivo Excel
+function leerExcel() {
+  const archivo = document.getElementById('excelFile').files[0];
+  if (!archivo) {
+    mostrarLog('❌ Por favor selecciona un archivo Excel', 'error');
+    return;
+  }
+
+  const lector = new FileReader();
+  lector.onload = function(e) {
+    try {
+      const datos = new Uint8Array(e.target.result);
+      libroExcel = XLSX.read(datos, { 
+        type: 'array',
+        cellDates: true,
+        cellText: false,
+        raw: false
+      });
+      
+      mostrarLog(`🔍 Hojas encontradas: ${libroExcel.SheetNames.join(', ')}`, 'info');
+      
+      const hojaIdent = libroExcel.Sheets["Identificacion"];
+      const hojaDatos = libroExcel.Sheets["Datos"];
+      
+      if (!hojaIdent || !hojaDatos) {
+        mostrarLog('❌ El archivo debe tener hojas "Identificacion" y "Datos"', 'error');
+        return;
+      }
+      
+      procesarDatosWebinar(hojaIdent, hojaDatos);
+      cargarMensajesGuardados();
+      cargarEtiquetasDesdeDatos();
+      mostrarLog('✅ Archivo Excel procesado correctamente', 'success');
+    } catch (error) {
+      mostrarLog('❌ Error al procesar el archivo: ' + error.message, 'error');
+    }
+  };
+  
+  lector.readAsArrayBuffer(archivo);
+}
+
+// Función para procesar los datos del webinar
+function procesarDatosWebinar(hojaIdent, hojaDatos) {
+  participantes = [];
+  let fila = 2;
+  let procesados = 0;
+
+  while (true) {
+    const nombre = hojaIdent["A" + fila];
+    const apellidos = hojaIdent["B" + fila];
+    const telefono = hojaIdent["C" + fila];
+    
+    if (!nombre || !nombre.v) break;
+    
+    if (!telefono || !telefono.v) {
+      fila++;
+      continue;
+    }
+
+    // Leer datos adicionales de la hoja Datos
+    let filaDatos = {};
+    let col = 65; // Columna A
+    
+    while (hojaDatos[String.fromCharCode(col) + "1"]) {
+      const etiqueta = hojaDatos[String.fromCharCode(col) + "1"].v;
+      const celda = hojaDatos[String.fromCharCode(col) + fila];
+      let valor = "";
+      
+      if (celda) {
+        if (celda.t === 'd' && celda.v instanceof Date) {
+          valor = celda.v.toLocaleDateString('es-ES');
+        } else if (celda.w) {
+          valor = celda.w;
+        } else if (celda.v !== undefined) {
+          valor = celda.v;
+        }
+      }
+      filaDatos[etiqueta] = valor;
+      col++;
+    }
+
+    // Formatear teléfono
+    let telefonoLimpio = telefono.v.toString().replace(/\D/g, '');
+    if (telefonoLimpio.length === 9) {
+      telefonoLimpio = '34' + telefonoLimpio;
+    }
+
+    const participante = {
+      nombre: nombre.v.toString(),
+      apellidos: apellidos ? apellidos.v.toString() : '',
+      telefono: telefonoLimpio,
+      datos: filaDatos,
+      fecha: filaDatos["FECHA"] || '',
+      hora: filaDatos["HORA"] || '',
+      nombreWebinar: filaDatos["NOMBRE WEBINAR"] || '',
+      url: filaDatos["URL"] || '',
+      nombreCompleto: filaDatos["NOMBRE COMPLETO"] || `${nombre.v} ${apellidos ? apellidos.v : ''}`.trim(),
+      telefonoFormateado: filaDatos["TELEFONO FORMATEADO"] || telefonoLimpio
+    };
+
+    participantes.push(participante);
+    procesados++;
+    fila++;
+  }
+
+  mostrarEstadisticas();
+  document.getElementById('editorMensaje').classList.remove('hidden');
+  mostrarLog(`✅ Procesados ${procesados} participantes válidos`, 'success');
+}
+
+// Función para cargar etiquetas desde datos
+function cargarEtiquetasDesdeDatos() {
+  etiquetasDatos = [];
+  let html = '<span onclick="insertarEtiqueta(\'{Nombre}\')" class="cursor-pointer bg-blue-100 hover:bg-blue-200 px-2 py-1 mx-1 mb-1 rounded text-xs inline-block">{Nombre}</span>';
+  html += '<span onclick="insertarEtiqueta(\'{Apellidos}\')" class="cursor-pointer bg-blue-100 hover:bg-blue-200 px-2 py-1 mx-1 mb-1 rounded text-xs inline-block">{Apellidos}</span>';
+  
+  if (libroExcel && libroExcel.Sheets["Datos"]) {
+    const hojaDatos = libroExcel.Sheets["Datos"];
+    let col = 65;
+    
+    while (hojaDatos[String.fromCharCode(col) + "1"]) {
+      const etiqueta = hojaDatos[String.fromCharCode(col) + "1"].v;
+      etiquetasDatos.push(etiqueta);
+      html += `<span onclick='insertarEtiqueta("{${etiqueta}}")' class='cursor-pointer bg-green-100 hover:bg-green-200 px-2 py-1 mx-1 mb-1 rounded text-xs inline-block'>{${etiqueta}}</span>`;
+      col++;
+    }
+  }
+  
+  document.getElementById("etiquetasContainer").innerHTML = html;
+}
+
+// Función para insertar etiqueta
+function insertarEtiqueta(etiqueta) {
+  const textarea = document.getElementById("mensajeTexto");
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const text = textarea.value;
+  textarea.value = text.slice(0, start) + etiqueta + text.slice(end);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = start + etiqueta.length;
+}
+
+// Función para aplicar plantilla
+function aplicarPlantilla() {
+  const tipo = document.getElementById("tipoMensaje").value;
+  if (plantillasMensajes[tipo]) {
+    document.getElementById("mensajeTexto").value = plantillasMensajes[tipo];
+  }
+}
+
+// Función para mostrar estadísticas
+function mostrarEstadisticas() {
+  const statsDiv = document.getElementById('estadisticas');
+  const statsContent = document.getElementById('stats-content');
+  
+  const conURL = participantes.filter(p => p.url).length;
+  const conHora = participantes.filter(p => p.hora).length;
+  const telefonosValidos = participantes.filter(p => p.telefono && p.telefono.length >= 9).length;
+  
+  statsContent.innerHTML = `
+    <div class="bg-white p-3 rounded-lg text-center">
+      <div class="text-2xl font-bold text-blue-600">${participantes.length}</div>
+      <div class="text-xs text-gray-600">Participantes</div>
+    </div>
+    <div class="bg-white p-3 rounded-lg text-center">
+      <div class="text-2xl font-bold text-green-600">${conURL}</div>
+      <div class="text-xs text-gray-600">Con URL</div>
+    </div>
+    <div class="bg-white p-3 rounded-lg text-center">
+      <div class="text-2xl font-bold text-purple-600">${telefonosValidos}</div>
+      <div class="text-xs text-gray-600">Teléfonos válidos</div>
+    </div>
+    <div class="bg-white p-3 rounded-lg text-center">
+      <div class="text-2xl font-bold text-orange-600">${etiquetasDatos.length}</div>
+      <div class="text-xs text-gray-600">Etiquetas</div>
+    </div>
+  `;
+  
+  statsDiv.classList.remove('hidden');
+}
+
+// Función para mostrar vista previa del mensaje
+function mostrarVistaPrevia() {
+  const mensajeTexto = document.getElementById('mensajeTexto').value;
+  if (!mensajeTexto.trim()) {
+    mostrarLog('❌ Por favor escribe un mensaje primero', 'error');
+    return;
+  }
+
+  if (participantes.length === 0) {
+    mostrarLog('❌ No hay participantes cargados', 'error');
+    return;
+  }
+
+  const participanteEjemplo = participantes[0];
+  const mensajeFormateado = formatearMensaje(mensajeTexto, participanteEjemplo);
+  
+  const previewDiv = document.getElementById('vistaPrevia');
+  const previewContent = document.getElementById('previewContent');
+  
+  previewContent.innerHTML = `
+    <div class="text-sm text-gray-600 mb-2">📱 Ejemplo para: ${participanteEjemplo.nombreCompleto}</div>
+    <div class="whitespace-pre-wrap">${mensajeFormateado}</div>
+  `;
+  
+  previewDiv.classList.remove('hidden');
+  mostrarLog('👀 Vista previa generada con el primer participante', 'info');
+}
+
+// Función para formatear mensaje con etiquetas
+function formatearMensaje(mensaje, participante) {
+  let mensajeFormateado = mensaje;
+  
+  // Reemplazar etiquetas básicas
+  mensajeFormateado = mensajeFormateado.replace(/{Nombre}/g, participante.nombre || '');
+  mensajeFormateado = mensajeFormateado.replace(/{Apellidos}/g, participante.apellidos || '');
+  
+  // Reemplazar etiquetas de datos
+  etiquetasDatos.forEach(etiqueta => {
+    const valor = participante.datos[etiqueta] || '';
+    mensajeFormateado = mensajeFormateado.replace(new RegExp(`{${etiqueta}}`, 'g'), valor);
+  });
+  
+  return mensajeFormateado;
+}
+
+// Función para cargar mensajes guardados
+function cargarMensajesGuardados() {
+  if (!libroExcel.Sheets["Mensajes"]) {
+    libroExcel.Sheets["Mensajes"] = {
+      "A1": { t: "s", v: "Identificador" },
+      "B1": { t: "s", v: "Mensaje" },
+      "!ref": "A1:B1"
+    };
+    return;
+  }
+  
+  const hoja = libroExcel.Sheets["Mensajes"];
+  const select = document.getElementById("mensajeSelect");
+  select.innerHTML = '<option value="">-- Seleccionar mensaje --</option><option value="nuevo">➕ Crear nuevo</option>';
+  
+  let fila = 2;
+  while (hoja["A" + fila] && hoja["B" + fila]) {
+    const opt = document.createElement("option");
+    opt.value = fila;
+    opt.textContent = hoja["A" + fila].v;
+    select.appendChild(opt);
+    fila++;
+  }
+}
+
+// Función para cargar mensaje guardado
+function cargarMensajeGuardado() {
+  const valor = document.getElementById("mensajeSelect").value;
+  if (!valor || valor === "nuevo") return;
+  
+  const hoja = libroExcel.Sheets["Mensajes"];
+  document.getElementById("nombreMensaje").value = hoja["A" + valor].v;
+  document.getElementById("mensajeTexto").value = hoja["B" + valor].v;
+}
+
+// Función para guardar mensaje
+function guardarMensaje() {
+  const nombre = document.getElementById("nombreMensaje").value.trim();
+  const mensaje = document.getElementById("mensajeTexto").value.trim();
+  
+  if (!nombre || !mensaje) {
+    mostrarLog('❌ Completa el nombre y el mensaje', 'error');
+    return;
+  }
+
+  if (!libroExcel.Sheets["Mensajes"]) {
+    libroExcel.Sheets["Mensajes"] = {
+      "A1": { t: "s", v: "Identificador" },
+      "B1": { t: "s", v: "Mensaje" },
+      "!ref": "A1:B1"
+    };
+  }
+
+  const hoja = libroExcel.Sheets["Mensajes"];
+  let fila = 2;
+  while (hoja["A" + fila]) fila++;
+  
+  hoja["A" + fila] = { t: "s", v: nombre };
+  hoja["B" + fila] = { t: "s", v: mensaje };
+  
+  const rango = XLSX.utils.decode_range(hoja["!ref"] || "A1:B1");
+  rango.e.r = Math.max(rango.e.r, fila - 1);
+  hoja["!ref"] = XLSX.utils.encode_range(rango);
+
+  // Descargar Excel actualizado
+  const wbout = XLSX.write(libroExcel, { bookType: "xlsx", type: "binary" });
+  const blob = new Blob([new Uint8Array([...wbout].map(c => c.charCodeAt(0)))], { type: "application/octet-stream" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Plantilla_WhatsApp_Webinar_Actualizada.xlsx";
+  link.click();
+
+  cargarMensajesGuardados();
+  mostrarLog(`✅ Mensaje "${nombre}" guardado correctamente`, 'success');
+}
+
+// Función para iniciar envío en lote
+function iniciarEnvioLote() {
+  const mensajeTexto = document.getElementById('mensajeTexto').value;
+  if (!mensajeTexto.trim()) {
+    mostrarLog('❌ Por favor escribe un mensaje primero', 'error');
+    return;
+  }
+
+  if (participantes.length === 0) {
+    mostrarLog('❌ No hay participantes cargados', 'error');
+    return;
+  }
+
+  mensajePersonalizado = mensajeTexto;
+  indiceActual = 0;
+  
+  mostrarListaEnvio();
+  document.getElementById('btnSiguiente').classList.remove('hidden');
+  
+  mostrarLog(`🚀 Iniciando envío masivo a ${participantes.length} participantes`, 'success');
+  enviarSiguiente(); // Enviar el primero automáticamente
+}
+
+// Función para mostrar lista de envíos
+function mostrarListaEnvio() {
+  const tablaDiv = document.getElementById('tablaEnvios');
+  const contadorDiv = document.getElementById('contadorEnvio');
+  
+  contadorDiv.textContent = `📊 Progreso: ${indiceActual}/${participantes.length} enviados`;
+  
+  let tablaHTML = `
+    <table class="w-full border-collapse border border-gray-300 text-sm">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="border border-gray-300 px-3 py-2 text-left">#</th>
+          <th class="border border-gray-300 px-3 py-2 text-left">Nombre</th>
+          <th class="border border-gray-300 px-3 py-2 text-left">Teléfono</th>
+          <th class="border border-gray-300 px-3 py-2 text-left">Fecha/Hora</th>
+          <th class="border border-gray-300 px-3 py-2 text-left">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+  
+  participantes.forEach((participante, index) => {
+    const estado = index < indiceActual ? '✅ Enviado' : index === indiceActual ? '🟡 Siguiente' : '⏳ Pendiente';
+    const filaClass = index < indiceActual ? 'bg-green-50' : index === indiceActual ? 'bg-yellow-50' : '';
+    
+    tablaHTML += `
+      <tr class="${filaClass}">
+        <td class="border border-gray-300 px-3 py-2">${index + 1}</td>
+        <td class="border border-gray-300 px-3 py-2">${participante.nombreCompleto}</td>
+        <td class="border border-gray-300 px-3 py-2">${participante.telefono}</td>
+        <td class="border border-gray-300 px-3 py-2 text-xs">${participante.fecha || 'N/A'} ${participante.hora || ''}</td>
+        <td class="border border-gray-300 px-3 py-2">${estado}</td>
+      </tr>
+    `;
+  });
+  
+  tablaHTML += '</tbody></table>';
+  tablaDiv.innerHTML = tablaHTML;
+  
+  document.getElementById('listaEnvio').classList.remove('hidden');
+}
+
+// Función para enviar siguiente mensaje
+function enviarSiguiente() {
+  if (indiceActual >= participantes.length) {
+    mostrarLog('✅ ¡Envío masivo completado!', 'success');
+    document.getElementById('btnSiguiente').classList.add('hidden');
+    return;
+  }
+
+  const participante = participantes[indiceActual];
+  const mensajeFormateado = formatearMensaje(mensajePersonalizado, participante);
+  
+  // Crear enlace de WhatsApp
+  const mensajeCodificado = encodeURIComponent(mensajeFormateado);
+  const urlWhatsApp = `https://web.whatsapp.com/send?phone=${participante.telefono}&text=${mensajeCodificado}`;
+  
+  // Abrir WhatsApp en nueva pestaña
+  window.open(urlWhatsApp, '_blank');
+  
+  mostrarLog(`📤 Enviando mensaje ${indiceActual + 1}/${participantes.length} a ${participante.nombreCompleto}`, 'info');
+  
+  indiceActual++;
+  
+  // Actualizar tabla
+  mostrarListaEnvio();
+  
+  // Si es el último, ocultar botón
+  if (indiceActual >= participantes.length) {
+    setTimeout(() => {
+      mostrarLog('✅ ¡Envío masivo completado!', 'success');
+      document.getElementById('btnSiguiente').classList.add('hidden');
+    }, 1000);
+  }
+}
+
+// Función para mostrar logs
+function mostrarLog(mensaje, tipo = 'info') {
+  const logDiv = document.getElementById('logContent');
+  const timestamp = new Date().toLocaleTimeString('es-ES');
+  
+  let icono = 'ℹ️';
+  let color = 'text-gray-600';
+  
+  switch (tipo) {
+    case 'success':
+      icono = '✅';
+      color = 'text-green-600';
+      break;
+    case 'error':
+      icono = '❌';
+      color = 'text-red-600';
+      break;
+    case 'warning':
+      icono = '⚠️';
+      color = 'text-yellow-600';
+      break;
+  }
+  
+  const logEntry = document.createElement('div');
+  logEntry.className = `mb-1 ${color}`;
+  logEntry.innerHTML = `<span class="text-xs text-gray-500">[${timestamp}]</span> ${icono} ${mensaje}`;
+  
+  logDiv.appendChild(logEntry);
+  logDiv.scrollTop = logDiv.scrollHeight;
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', function() {
+  mostrarLog('🚀 Sistema de recordatorios de webinar iniciado', 'success');
+  mostrarLog('📊 Carga tu archivo Excel para comenzar', 'info');
+});
+</script>
+
+</body>
+</html>
