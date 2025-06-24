@@ -1,24 +1,28 @@
-# 📱 Sistema de Recordatorios de Webinar - WhatsApp
+# 📱 Sistema de recordatorios - WhatsApp
 
-Sistema completo para envío masivo de recordatorios de webinar a través de WhatsApp, compuesto por dos herramientas integradas.
+Sistema completo para envío masivo de recordatorios de webinar a través de WhatsApp, compuesto por dos herramientas integradas, todo desde un único archivo HTML.
 
-## 🎯 Descripción General
 
-Este sistema consta de **dos aplicaciones HTML** que trabajan en conjunto:
+## 🎯 Descripción general
 
-1. **📊 Generador de Excel** (`whatsapp-webinar-generador.html`) - Crea el archivo Excel con estructura optimizada
-2. **📱 Automator de Mensajes** (`whatsapp-webinar-auto.html`) - Envía mensajes masivos usando el Excel generado
+Este sistema está contenido en **un único archivo HTML** (`index.html`), que incluye dos herramientas integradas en una sola interfaz:
 
-## 🚀 Características Principales
+1. **📊 Generador de plantilla excel**  
+   Crea un archivo Excel estructurado con 3 hojas y fórmulas automatizadas.
+   
+2. **📱 Envío de mensajes por WhatsApp**  
+   Automatiza el envío personalizado de recordatorios utilizando los datos del Excel.
 
-### 📊 Generador de Excel
+## 🚀 Características principales
+
+### 📊 Generador de excel
 - ✅ **Generación automática** de estructura Excel con 3 hojas
 - ✅ **Configuración personalizada** de fecha, hora, nombre y URL del webinar
 - ✅ **Fórmulas automáticas** para NOMBRE COMPLETO y TELEFONO FORMATEADO
 - ✅ **Plantillas de mensajes** predefinidas incluidas
 - ✅ **Escalable hasta 1000+ participantes**
 
-### 📱 Automator de Mensajes
+### 📱 Automatizador de mensajes
 - ✅ **Carga del archivo Excel** generado
 - ✅ **Personalización de mensajes** con etiquetas dinámicas
 - ✅ **Vista previa** del mensaje antes del envío
@@ -26,9 +30,9 @@ Este sistema consta de **dos aplicaciones HTML** que trabajan en conjunto:
 - ✅ **Seguimiento** del progreso de envío en tiempo real
 - ✅ **Gestión de mensajes** guardados para reutilización
 
-## 📋 Flujo de Trabajo Completo
+## 📋 Flujo de trabajo completo
 
-### 🔧 Paso 1: Generar el Excel Base
+### 🔧 Paso 1: Generar el excel base
 1. Abre `whatsapp-webinar-generador.html` en tu navegador
 2. Configura los datos del webinar:
    - **📅 Fecha:** Fecha del webinar
@@ -39,7 +43,7 @@ Este sistema consta de **dos aplicaciones HTML** que trabajan en conjunto:
 3. Haz clic en **"📄 Generar Excel Plantilla"**
 4. Se descarga automáticamente el archivo Excel estructurado
 
-### 📝 Paso 2: Completar los Datos
+### 📝 Paso 2: Completar los datos
 1. Abre el archivo Excel generado
 2. Ve a la hoja **"Identificacion"**
 3. Completa los datos de tus participantes:
@@ -51,7 +55,7 @@ Este sistema consta de **dos aplicaciones HTML** que trabajan en conjunto:
    - **NOMBRE COMPLETO** = NOMBRE + APELLIDOS
    - **TELEFONO FORMATEADO** = añade "34" si es necesario
 
-### 📱 Paso 3: Enviar Mensajes Masivos
+### 📱 Paso 3: Enviar mensajes masivos
 1. Abre `whatsapp-webinar-auto.html` en tu navegador
 2. Haz clic en **"Archivo Excel"** y selecciona tu archivo completado
 3. Haz clic en **"📖 Analizar datos"**
@@ -64,7 +68,7 @@ Este sistema consta de **dos aplicaciones HTML** que trabajan en conjunto:
 7. Haz clic en **"🚀 Iniciar envío masivo"**
 8. Confirma cada envío haciendo clic en **"📤 Enviar siguiente"**
 
-## 📊 Estructura del Excel Generado
+## 📊 Estructura del excel generado
 
 ### Hoja "Identificacion" (Para completar manualmente)
 ```
@@ -89,7 +93,7 @@ Confirmación Asistencia    | ¿Confirmas tu asistencia...
 Recordatorio Urgente       | 🚨 ¡RECORDATORIO URGENTE!...
 ```
 
-## 🏷️ Etiquetas Disponibles
+## 🏷️ Etiquetas disponibles
 
 Usa estas etiquetas en tus mensajes para personalización automática:
 
@@ -104,7 +108,7 @@ Usa estas etiquetas en tus mensajes para personalización automática:
 | `{NOMBRE COMPLETO}` | Nombre + Apellidos | Juan Pérez García |
 | `{TELEFONO FORMATEADO}` | Teléfono con prefijo | 34612345678 |
 
-## 💬 Ejemplo de Mensaje Personalizado
+## 💬 Ejemplo de mensaje personalizado
 
 ```
 ¡Hola {Nombre}! 👋
@@ -137,14 +141,14 @@ Te recordamos que tienes programado el webinar:
 ¿Tienes alguna duda? ¡Escríbenos!
 ```
 
-## ⚠️ Requisitos y Consideraciones
+## ⚠️ Requisitos y consideraciones
 
-### 📋 Antes de Empezar
+### 📋 Antes de empezar
 - **WhatsApp Web** debe estar abierto y conectado
 - **Navegador moderno** (Chrome, Firefox, Safari, Edge)
 - **Archivo Excel** generado con la herramienta incluida
 
-### 📱 Formato de Teléfonos
+### 📱 Formato de teléfonos
 - **Formato español:** 9 dígitos (ej: 612345678)
 - **Se acepta:** 612345678, +34612345678, 34612345678
 - **El sistema añade automáticamente** el prefijo +34 si no está presente
@@ -154,14 +158,14 @@ Te recordamos que tienes programado el webinar:
 - **Confirmación manual:** Cada mensaje se abre en WhatsApp Web para confirmar
 - **Respeta los límites** de WhatsApp para evitar restricciones
 
-## 🔧 Solución de Problemas
+## 🔧 Solución de problemas
 
 ### ❌ Error al generar Excel
 - Verifica que hayas introducido una **fecha válida**
 - Asegúrate de que todos los campos obligatorios estén completos
 - Prueba con un número menor de filas primero
 
-### ❌ Error al cargar Excel en el automator
+### ❌ Error al cargar Excel en el automatizador
 - Verifica que el archivo tenga las hojas **"Identificacion"** y **"Datos"**
 - Asegúrate de que hayas completado los datos en la hoja "Identificacion"
 - Comprueba que los teléfonos tengan el formato correcto (9 dígitos)
@@ -176,26 +180,26 @@ Te recordamos que tienes programado el webinar:
 - Asegúrate de que el Excel tenga los **datos correctos** en la hoja "Datos"
 - Revisa que hayas **cargado correctamente** el archivo
 
-## 📞 Características Avanzadas
+## 📞 Características avanzadas
 
-### 💾 Gestión de Mensajes
+### 💾 Gestión de mensajes
 - **Guardar mensajes** personalizados para reutilización
 - **Cargar mensajes** guardados desde el Excel
 - **Plantillas predefinidas** listas para usar
 
-### 📊 Seguimiento de Envíos
+### 📊 Seguimiento de envíos
 - **Progreso en tiempo real** del envío masivo
 - **Lista detallada** de participantes y estados
 - **Registro de actividad** completo con timestamps
 
-### 🎯 Personalización Avanzada
+### 🎯 Personalización avanzada
 - **Mensajes por tipo** (recordatorio, confirmación, urgente)
 - **Vista previa** antes del envío
 - **Edición en tiempo real** de mensajes
 
 ---
 
-## 🎉 ¡Listo para Usar!
+## 🎉 ¡Listo para usar!
 
 Con este sistema tienes todo lo necesario para:
 1. **Generar** archivos Excel estructurados para webinars
